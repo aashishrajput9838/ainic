@@ -15,8 +15,8 @@
   ],
   "build": {
     "env": {
-      "NPM_LEGACY_PEER_DEPS": "true",
-      "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
+      "NPM_CONFIG_LEGACY_PEER_DEPS": "true",
+      "NPM_LEGACY_PEER_DEPS": "true"
     }
   },
   "github": {
