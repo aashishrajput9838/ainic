@@ -1,6 +1,6 @@
 export default function Header() {
   return (
-    <header className="bg-black/80 backdrop-blur border-b border-gray-800 sticky top-0 z-50">
+    <header className="bg-black/80 backdrop-blur border-b border-gray-800 sticky top-0 z-[9999]">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <div className="text-2xl font-bold">ainic</div>
 
