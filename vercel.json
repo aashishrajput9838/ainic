@@ -1,7 +1,22 @@
 {
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next",
+      "config": {
+        "includeFiles": [
+          "next.config.js",
+          "next.config.ts",
+          "public/**/*",
+          ".next/**/*"
+        ]
+      }
+    }
+  ],
   "build": {
     "env": {
-      "NPM_LEGACY_PEER_DEPS": "true"
+      "NPM_LEGACY_PEER_DEPS": "true",
+      "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
     }
   },
   "github": {
