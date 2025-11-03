@@ -1,6 +1,28 @@
+'use client';
+
+import { useState } from 'react';
+import { useSearch } from '@/contexts/SearchContext';
+
 export default function Hero() {
+  const [localSearchTerm, setLocalSearchTerm] = useState('');
+  const { setSearchTerm } = useSearch();
+
+  // Add real-time search update
+  const handleRealTimeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const term = e.target.value;
+    setLocalSearchTerm(term);
+    // Update search term in real-time
+    setSearchTerm(term);
+    
+    // Scroll to the token section as user types
+    const element = document.getElementById('token-section');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <div className="relative h-96 pt-35">
+    <div className="relative h-96 pt-24">
       {/* Background video */}
       <video 
         autoPlay 
@@ -33,11 +55,10 @@ export default function Hero() {
           <input
             type="text"
             placeholder="Search for aitools"
+            value={localSearchTerm}
+            onChange={handleRealTimeSearch}
             className="flex-1 bg-black/60 border border-gray-600 px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400"
           />
-          <button className="bg-yellow-400 text-black px-8 py-3 font-semibold hover:bg-yellow-300 transition">
-            Search
-          </button>
         </div>
       </div>
     </div>

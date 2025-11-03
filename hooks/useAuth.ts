@@ -7,7 +7,9 @@ import {
   createUserWithEmailAndPassword, 
   signOut,
   onAuthStateChanged,
-  User
+  User,
+  signInWithPopup,
+  GoogleAuthProvider
 } from 'firebase/auth';
 
 export function useAuth() {
@@ -41,6 +43,16 @@ export function useAuth() {
     }
   };
 
+  const signInWithGoogle = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      return { user: result.user, error: null };
+    } catch (error) {
+      return { user: null, error };
+    }
+  };
+
   const logout = async () => {
     try {
       await signOut(auth);
@@ -55,6 +67,7 @@ export function useAuth() {
     loading,
     signIn,
     signUp,
+    signInWithGoogle,
     logout
   };
 }
