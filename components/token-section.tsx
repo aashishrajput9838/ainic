@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { ChevronDown, Check } from "lucide-react"
 import { useSearch } from '@/contexts/SearchContext'
 import { getDocuments } from '@/lib/firestore'
@@ -81,7 +81,7 @@ export default function TokenSection() {
   const [sortBy, setSortBy] = useState("name")
   const [sortOrder, setSortOrder] = useState("asc")
   const [showOnlyFree, setShowOnlyFree] = useState(false)
-  const { searchTerm, activeCategory } = useSearch()
+  const { searchTerm, activeCategory, setActiveCategory } = useSearch()
 
   // Load AI tools from Firestore on mount
   useEffect(() => {
@@ -103,6 +103,15 @@ export default function TokenSection() {
 
     fetchTools()
   }, [])
+
+  // Derive categories dynamically from Firestore data
+  const categories = useMemo(() => {
+    const categorySet = new Set<string>();
+    aiTools.forEach((tool) => {
+      if (tool.category) categorySet.add(tool.category);
+    });
+    return ["all", ...Array.from(categorySet).sort()];
+  }, [aiTools]);
 
   // Function to sort tools based on current sort settings
   const sortedTools = [...aiTools].sort((a, b) => {
@@ -162,6 +171,23 @@ export default function TokenSection() {
 
   return (
     <div id="token-section" className="bg-black px-12 py-8">
+      {/* Category filters derived from Firestore */}
+      <div className="flex flex-wrap items-center gap-3 mb-6">
+        {categories.map((category) => (
+          <button
+            key={category}
+            onClick={() => setActiveCategory(category)}
+            className={`px-3 py-1 rounded-full text-sm border transition ${
+              activeCategory === category
+                ? 'bg-yellow-400 text-black border-yellow-400'
+                : 'bg-black border-gray-700 text-gray-300 hover:border-yellow-400'
+            }`}
+          >
+            {category === 'all' ? 'All' : category.charAt(0).toUpperCase() + category.slice(1)}
+          </button>
+        ))}
+      </div>
+
       {/* Search and Filters */}
       <div className="flex items-center gap-4 mb-8">
         <div className="flex gap-4 ml-auto">

@@ -6,10 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "seed:ai-tools": "node scripts/seed-ai-tools.mjs",
+    "seed:ai-tools:admin": "node scripts/seed-ai-tools-admin.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
+    "@opentelemetry/api": "^1.9.0",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-aspect-ratio": "^1.1.0",
@@ -45,6 +48,7 @@
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.5.1",
     "firebase": "^11.0.1",
+    "firebase-admin": "^13.6.0",
     "framer-motion": "^12.4.1",
     "lucide-react": "^0.468.0",
     "next": "16.0.0",
@@ -64,10 +68,12 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
     "@tailwindcss/postcss": "^4.0.0",
+    "dotenv": "^16.6.1",
     "eslint": "^9.19.0",
     "eslint-config-next": "16.0.0",
     "postcss": "^8.5.1",
     "tailwindcss": "^4.0.0",
+    "ts-node": "^10.9.2",
     "typescript": "5.7.3"
   }
 }
