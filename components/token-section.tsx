@@ -73,6 +73,39 @@ const getGradient = (index: number) => {
 // AI tools are now loaded from Firestore collection `aiTools`
 // See README or Firebase console for how to seed this data.
 
+const defaultAiTools: AiTool[] = [
+  {
+    name: "Midjourney Free",
+    description: "AI-powered creative partner that transforms text into extraordinary visuals.",
+    image: "https://images.unsplash.com/photo-1547891654-e66ed7ebb968?auto=format&fit=crop&w=256&q=60",
+    category: "image",
+  },
+  {
+    name: "DALL-E",
+    description: "Generative AI that creates stunning images from text descriptions.",
+    image: "https://images.unsplash.com/photo-1547891654-e66ed7ebb968?auto=format&fit=crop&w=256&q=60",
+    category: "image",
+  },
+  {
+    name: "Jasper",
+    description: "AI copywriter that helps create marketing content 10x faster.",
+    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=256&q=60",
+    category: "writing",
+  },
+  {
+    name: "Notion AI",
+    description: "All-in-one workspace enhanced with AI for note-taking and organization.",
+    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=256&q=60",
+    category: "productivity",
+  },
+  {
+    name: "Otter.ai",
+    description: "Voice meeting assistant that transcribes and summarizes conversations.",
+    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=256&q=60",
+    category: "productivity",
+  },
+];
+
 export default function TokenSection() {
   const [aiTools, setAiTools] = useState<AiTool[]>([])
   const [loading, setLoading] = useState(true)
@@ -83,18 +116,25 @@ export default function TokenSection() {
   const [showOnlyFree, setShowOnlyFree] = useState(false)
   const { searchTerm, activeCategory } = useSearch()
 
-  // Load AI tools from Firestore on mount
+  // Load AI tools from Firestore on mount, with static fallback
   useEffect(() => {
     const fetchTools = async () => {
       setLoading(true)
       setError(null)
+
       const { documents, error } = await getDocuments('aiTools')
+
       if (error) {
         console.error('Error loading AI tools:', error)
-        setError('Failed to load AI tools')
+        // Fallback to static tools so UI still works
+        setAiTools(defaultAiTools)
+      } else if (!documents || documents.length === 0) {
+        // No Firestore data yet – also use fallback
+        setAiTools(defaultAiTools)
       } else {
         setAiTools(documents as AiTool[])
       }
+
       setLoading(false)
     }
 
