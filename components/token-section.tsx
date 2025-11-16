@@ -1,18 +1,14 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import { ChevronDown, Check } from "lucide-react"
+import { ChevronDown, Check, Star } from "lucide-react"
 import { useSearch } from '@/contexts/SearchContext'
 import { getDocuments } from '@/lib/firestore'
+import { useFavorites } from '@/contexts/FavoritesContext'
+import type { FavoriteTool } from '@/contexts/FavoritesContext'
 
 // Type for AI tool documents from Firestore
-interface AiTool {
-  id?: string;
-  name: string;
-  description: string;
-  image: string;
-  category: string;
-}
+interface AiTool extends FavoriteTool {}
 
 // Function to generate unique gradients for each card
 const getGradient = (index: number) => {
@@ -82,6 +78,7 @@ export default function TokenSection() {
   const [sortOrder, setSortOrder] = useState("asc")
   const [showOnlyFree, setShowOnlyFree] = useState(false)
   const { searchTerm, activeCategory, setActiveCategory } = useSearch()
+  const { isFavorite, toggleFavorite } = useFavorites()
 
   // Load AI tools from Firestore on mount
   useEffect(() => {
@@ -223,7 +220,20 @@ export default function TokenSection() {
                 background: getGradient(index)
               }}
             >
-              <div className="p-8 text-center">
+              <div className="flex justify-end p-3">
+                <button
+                  type="button"
+                  onClick={() => toggleFavorite(tool)}
+                  className="text-white hover:text-yellow-300 transition"
+                  aria-label={isFavorite(tool) ? 'Remove from favorites' : 'Add to favorites'}
+                >
+                  <Star
+                    size={20}
+                    className={isFavorite(tool) ? 'fill-yellow-400 text-yellow-400' : 'text-white'}
+                  />
+                </button>
+              </div>
+              <div className="px-8 pb-8 pt-2 text-center">
                 <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden bg-white/5 flex items-center justify-center">
                   <img 
                     src={tool.image} 
