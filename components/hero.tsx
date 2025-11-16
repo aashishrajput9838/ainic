@@ -51,7 +51,7 @@ export default function Hero() {
           <p className="text-yellow-400 text-lg font-semibold">Followers: 11k</p>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex gap-4 mt-6">
           <input
             type="text"
             placeholder="Search for aitools"
