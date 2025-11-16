@@ -1,8 +1,18 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ChevronDown, Check } from "lucide-react"
 import { useSearch } from '@/contexts/SearchContext'
+import { getDocuments } from '@/lib/firestore'
+
+// Type for AI tool documents from Firestore
+interface AiTool {
+  id?: string;
+  name: string;
+  description: string;
+  image: string;
+  category: string;
+}
 
 // Function to generate unique gradients for each card
 const getGradient = (index: number) => {
@@ -60,14 +70,8 @@ const getGradient = (index: number) => {
   return gradients[index % gradients.length];
 };
 
-// AI showcase data (50 tools total) with categories
-const aiTools = [
-  {
-    name: "ChatGPT",
-    description: "Conversational AI that writes, codes, and reasons like a human.",
-    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=256&q=60",
-    category: "writing"
-  },
+// AI tools are now loaded from Firestore collection `aiTools`
+// See README or Firebase console for how to seed this data.
   {
     name: "Midjourney Free",
     description: "AI-powered creative partner that transforms text into extraordinary visuals.",
@@ -347,11 +351,32 @@ const aiTools = [
 ];
 
 export default function TokenSection() {
+  const [aiTools, setAiTools] = useState<AiTool[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState("following")
   const [sortBy, setSortBy] = useState("name")
   const [sortOrder, setSortOrder] = useState("asc")
   const [showOnlyFree, setShowOnlyFree] = useState(false)
   const { searchTerm, activeCategory } = useSearch()
+
+  // Load AI tools from Firestore on mount
+  useEffect(() => {
+    const fetchTools = async () => {
+      setLoading(true)
+      setError(null)
+      const { documents, error } = await getDocuments('aiTools')
+      if (error) {
+        console.error('Error loading AI tools:', error)
+        setError('Failed to load AI tools')
+      } else {
+        setAiTools(documents as AiTool[])
+      }
+      setLoading(false)
+    }
+
+    fetchTools()
+  }, [])
 
   // Function to sort tools based on current sort settings
   const sortedTools = [...aiTools].sort((a, b) => {
@@ -393,6 +418,22 @@ export default function TokenSection() {
     setShowOnlyFree(!showOnlyFree);
   };
 
+  if (loading) {
+    return (
+      <div id="token-section" className="bg-black px-12 py-8">
+        <div className="text-white">Loading AI tools...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div id="token-section" className="bg-black px-12 py-8">
+        <div className="text-red-400">{error}</div>
+      </div>
+    )
+  }
+
   return (
     <div id="token-section" className="bg-black px-12 py-8">
       {/* Search and Filters */}
@@ -424,7 +465,7 @@ export default function TokenSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 pb-4">
           {filteredAndSortedTools.map((tool, index) => (
             <div 
-              key={index} 
+              key={tool.id ?? index}
               className="rounded-2xl overflow-hidden transform transition-all duration-300 hover:-translate-y-3 hover:shadow-2xl"
               style={{
                 background: getGradient(index)
